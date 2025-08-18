@@ -1,0 +1,120 @@
+// components/navbar.tsx
+import React from 'react';
+import { Button } from 'ui';
+import { Menu } from 'icons';
+
+const Navbar = () => {
+  return (
+    <nav>
+      {/* Other navbar elements */}
+      <Button variant="ghost" size="sm" className="hidden sm:inline-flex bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        Connexion
+      </Button>
+      <Button variant="ghost" size="icon" className="md:hidden bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        <Menu className="w-5 h-5" />
+      </Button>
+      {/* Other navbar elements */}
+    </nav>
+  );
+};
+
+export default Navbar;
+
+// app/page.tsx
+import React from 'react';
+import { Button } from 'ui';
+import { Menu, Share2, Download } from 'icons';
+import { CardTitle } from 'components';
+
+const HomePage = () => {
+  return (
+    <div>
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight animate-slide-in-left text-[#141835]">
+        {"Apprenez les compétences de "}
+        <span className="text-inherit">{"demain"}</span>
+      </h1>
+      <h2 className="text-2xl sm:text-3xl font-bold text-[#141835]">{"Découvrez nos cours"}</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-[#141835]">{"Pourquoi choisir LearnHub ?"}</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-[#141835]">{"Comment ça marche ?"}</h2>
+      {/* Other section elements */}
+      <div className="w-16 h-16 bg-[#141835] text-white rounded-2xl flex items-center justify-center mx-auto font-bold text-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+        {/* Step number */}
+      </div>
+      {/* Other section elements */}
+      <Button size="sm" className="flex-1 bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        <Share2 className="w-4 h-4 mr-2" />
+        Partager
+      </Button>
+      <Button size="sm" className="flex-1 bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        <Download className="w-4 h-4 mr-2" />
+        Wishlist
+      </Button>
+      {/* Other section elements */}
+    </div>
+  );
+};
+
+export default HomePage;
+
+// app/courses/[id]/page.tsx
+import React from 'react';
+import { Button } from 'ui';
+import { Menu, Share2, Download } from 'icons';
+import { CardTitle } from 'components';
+
+const CoursePage = () => {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-4 text-[#141835]">Description du cours</h2>
+      <h2 className="text-2xl font-bold mb-6 text-[#141835]">Contenu du cours</h2>
+      {/* Other section elements */}
+      <CardTitle className="text-[#141835]">Détails du cours</CardTitle>
+      {/* Other section elements */}
+      <Button size="sm" className="flex-1 bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        <Share2 className="w-4 h-4 mr-2" />
+        Partager
+      </Button>
+      <Button size="sm" className="flex-1 bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        <Download className="w-4 h-4 mr-2" />
+        Wishlist
+      </Button>
+      {/* Other section elements */}
+    </div>
+  );
+};
+
+export default CoursePage;
+
+// app/courses/[id]/lessons/[lessonId]/page.tsx
+import React from 'react';
+import { Button } from 'ui';
+import { Menu, Share2, Download } from 'icons';
+import { CardTitle } from 'components';
+
+const LessonPage = () => {
+  return (
+    <div>
+      <Button variant="ghost" size="sm" asChild className="bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        {/* Link to previous lesson */}
+      </Button>
+      <Button variant="ghost" size="sm" className="hidden sm:inline-flex bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        Connexion
+      </Button>
+      {/* Other section elements */}
+      <h1 className="text-3xl font-bold mb-4 text-[#141835]">Lesson Title</h1>
+      {/* Other section elements */}
+      <Button asChild className="bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        {/* Link to previous lesson */}
+      </Button>
+      <Button asChild className="bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        {/* Link to next lesson */}
+      </Button>
+      <Button asChild className="bg-[#141835] text-white hover:bg-[#1a1f4a]">
+        {/* Link to quiz final */}
+      </Button>
+      {/* Other section elements */}
+    </div>
+  );
+};
+
+export default LessonPage;
