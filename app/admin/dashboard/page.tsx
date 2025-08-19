@@ -1,35 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Plus, Users, BarChart3, Settings, Edit, Trash2, Eye } from "lucide-react"
-
-type AdminUser = {
-  name: string
-  email?: string
-}
+import { useAuth } from "@/contexts/AuthContext"
 
 export default function AdminDashboard() {
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null)
+  const { user } = useAuth()
   const router = useRouter()
-
-  useEffect(() => {
-    const user = localStorage.getItem("adminUser")
-    if (user) {
-      setAdminUser(JSON.parse(user))
-    } else {
-      router.push("/admin/login")
-    }
-  }, [router])
-
-  const handleLogout = () => {
-    localStorage.removeItem("adminUser")
-    router.push("/admin/login")
-  }
 
   // Données des cours du professeur (normalement depuis une API)
   const myCourses = [
@@ -62,10 +43,6 @@ export default function AdminDashboard() {
     avgRating: 4.75,
   }
 
-  if (!adminUser) {
-    return <div className="px-4 py-6 sm:px-6 lg:px-8">Chargement...</div>
-  }
-
   return (
     <div className="min-h-screen bg-background">
       {/* NOTE: Pas de header local ici. La Navbar globale (composant) vient du layout. */}
@@ -82,9 +59,6 @@ export default function AdminDashboard() {
                 <Plus className="w-4 h-4 mr-2" />
                 Nouveau cours
               </Link>
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              Se déconnecter
             </Button>
           </div>
         </div>
@@ -191,8 +165,8 @@ export default function AdminDashboard() {
 
         {/* Actions rapides */}
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Card className="cursor-pointer transition-shadow hover:shadow-md" asChild>
-            <Link href="/admin/courses/new">
+          <Link href="/admin/courses/new">
+            <Card className="cursor-pointer transition-shadow hover:shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="w-5 h-5" />
@@ -200,11 +174,11 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>Commencez un nouveau cours avec nos outils</CardDescription>
               </CardHeader>
-            </Link>
-          </Card>
+            </Card>
+          </Link>
 
-          <Card className="cursor-pointer transition-shadow hover:shadow-md" asChild>
-            <Link href="/admin/analytics">
+          <Link href="/admin/analytics">
+            <Card className="cursor-pointer transition-shadow hover:shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="w-5 h-5" />
@@ -212,11 +186,11 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>Suivez les performances de vos cours</CardDescription>
               </CardHeader>
-            </Link>
-          </Card>
+            </Card>
+          </Link>
 
-          <Card className="cursor-pointer transition-shadow hover:shadow-md" asChild>
-            <Link href="/admin/settings">
+          <Link href="/admin/settings">
+            <Card className="cursor-pointer transition-shadow hover:shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="w-5 h-5" />
@@ -224,8 +198,8 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>Configurez votre profil professeur</CardDescription>
               </CardHeader>
-            </Link>
-          </Card>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>

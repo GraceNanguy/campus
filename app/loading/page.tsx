@@ -28,7 +28,7 @@ export default function LoadingPage() {
           <div className="w-24 h-24 flex items-center justify-center mx-auto">
             <Image
               src="/logo-placeholder.png"
-              alt="AY E-ACADEMIE Logo"
+              alt="AY E-CAMPUS Logo"
               width={64}
               height={64}
               className="animate-pulse"
@@ -38,7 +38,7 @@ export default function LoadingPage() {
 
         {/* Nom de l'app */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">AY E-ACADEMIE</h1>
+          <h1 className="text-4xl font-bold tracking-tight">AY E-CAMPUS</h1>
           <p className="text-muted-foreground">Votre plateforme d'apprentissage</p>
         </div>
 

@@ -29,7 +29,6 @@ export interface Lesson {
   title: string;
   content: string;
   video_url: string | null;
-  pdf_url: string | null;
   order_index: number;
   created_at: string;
   isCompleted?: boolean;

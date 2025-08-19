@@ -16,7 +16,7 @@ export default function ContactPage() {
                 <Mail className="h-5 w-5 text-[#141835] mt-0.5" />
                 <div>
                   <p className="font-medium">Email</p>
-                  <p className="text-muted-foreground">support@ay-e-academie.com</p>
+                  <p className="text-muted-foreground">support@ay-e-campus.com</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">

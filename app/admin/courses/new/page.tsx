@@ -1,6 +1,32 @@
 "use client"
 
+import React, { ChangeEvent, FormEvent } from 'react'
 import { Button } from "@/components/ui/button"
+
+interface CourseData {
+  title: string;
+  description: string;
+  category: string;
+  level: string;
+  price: string;
+  duration: string;
+  image: File | null;
+  imagePreview: string | null;
+  is_published: boolean;
+}
+
+interface Lesson {
+  id: number;
+  title: string;
+  content: string;
+  video_url?: string;
+  order_index: number;
+}
+
+interface AdminUser {
+  id: string;
+  name: string;
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,31 +39,42 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 
 export default function NewCoursePage() {
-  const [adminUser, setAdminUser] = useState(null)
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null)
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [isUploadingPdf, setIsUploadingPdf] = useState(false)
-  const fileInputRef = useRef(null)
-  const pdfInputRef = useRef(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // État du formulaire
-  const [courseData, setCourseData] = useState({
+  const [courseData, setCourseData] = useState<CourseData>({
     title: "",
     description: "",
-    longDescription: "",
     category: "",
     level: "",
     price: "",
-    originalPrice: "",
-    language: "Français",
+    duration: "",
     image: null,
     imagePreview: null,
-    totalHours: "",
+    is_published: false
   })
 
-  const [lessons, setLessons] = useState([
-    { id: 1, title: "", description: "", content: "", duration: "", hasVideo: false },
+  // État initial avec une première leçon
+  const [lessons, setLessons] = useState<Lesson[]>([
+    { id: 1, title: "", content: "", order_index: 1 },
   ])
+
+  // Réorganiser les leçons quand leur ordre change
+  useEffect(() => {
+    if (lessons.length > 1) {
+      const sortedLessons = [...lessons].sort((a, b) => a.order_index - b.order_index)
+      const reindexedLessons = sortedLessons.map((lesson, index) => ({
+        ...lesson,
+        order_index: index + 1
+      }))
+      if (JSON.stringify(reindexedLessons) !== JSON.stringify(lessons)) {
+        setLessons(reindexedLessons)
+      }
+    }
+  }, [lessons])
 
   useEffect(() => {
     const user = localStorage.getItem("adminUser")
@@ -61,120 +98,129 @@ export default function NewCoursePage() {
 
   const levels = ["Débutant", "Intermédiaire", "Avancé"]
 
-  const handleCourseChange = (field, value) => {
+  const handleCourseChange = (field: keyof CourseData, value: string) => {
     setCourseData((prev) => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setCourseData((prev) => ({
-        ...prev,
-        image: file,
-      }))
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
-      // Créer un aperçu
-      const reader = new FileReader()
-      reader.onload = (e) => {
+    setCourseData((prev) => ({
+      ...prev,
+      image: file,
+    }))
+
+    // Créer un aperçu
+    const reader = new FileReader()
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const result = e.target?.result
+      if (result && typeof result === 'string') {
         setCourseData((prev) => ({
           ...prev,
-          imagePreview: e.target.result,
+          imagePreview: result,
         }))
       }
-      reader.readAsDataURL(file)
     }
+    reader.readAsDataURL(file)
   }
 
-  const handlePdfUpload = async (e) => {
-    const file = e.target.files[0]
-    if (file && file.type === "application/pdf") {
-      setIsUploadingPdf(true)
-
-      try {
-        // Simulation d'extraction de texte PDF
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-
-        // Texte simulé extrait du PDF
-        const extractedText = `# Introduction au cours
-
-Ce cours vous permettra d'apprendre les concepts fondamentaux.
-
-## Chapitre 1: Les bases
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-## Chapitre 2: Concepts avancés
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-## Chapitre 3: Pratique
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
-
-        // Diviser le contenu en leçons basées sur les chapitres
-        const chapters = extractedText.split("## ").filter((chapter) => chapter.trim())
-        const newLessons = chapters.map((chapter, index) => ({
-          id: index + 1,
-          title: chapter
-            .split("\n")[0]
-            .replace("Chapitre ", "")
-            .replace(/\d+:\s*/, ""),
-          description: `Leçon ${index + 1} extraite du PDF`,
-          content: "## " + chapter.trim(),
-          duration: "15:00",
-          hasVideo: index === 0, // Première leçon avec vidéo d'intro
-        }))
-
-        setLessons(newLessons)
-
-        // Mettre à jour le titre du cours si vide
-        if (!courseData.title) {
-          handleCourseChange("title", "Cours extrait du PDF")
-        }
-      } catch (error) {
-        console.error("Erreur lors de l'extraction du PDF:", error)
-      } finally {
-        setIsUploadingPdf(false)
-      }
-    }
-  }
-
-  const handleLessonChange = (lessonId, field, value) => {
-    setLessons((prev) => prev.map((lesson) => (lesson.id === lessonId ? { ...lesson, [field]: value } : lesson)))
+    const handleLessonChange = (lessonId: number, field: keyof Lesson, value: string | number) => {
+    setLessons((prev) =>
+      prev.map((lesson) =>
+        lesson.id === lessonId
+          ? {
+              ...lesson,
+              [field]: value,
+            }
+          : lesson,
+      ),
+    )
   }
 
   const addLesson = () => {
     const newId = Math.max(...lessons.map((l) => l.id)) + 1
+    const nextOrderIndex = lessons.length + 1
     setLessons((prev) => [
       ...prev,
       {
         id: newId,
         title: "",
-        description: "",
         content: "",
-        duration: "",
-        hasVideo: false,
+        order_index: nextOrderIndex,
+        video_url: ""
       },
     ])
   }
 
-  const removeLesson = (lessonId) => {
+  const removeLesson = (lessonId: number) => {
     if (lessons.length > 1) {
       setLessons((prev) => prev.filter((lesson) => lesson.id !== lessonId))
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    
+    try {
+      // Validation des données requises
+      if (!courseData.title || !courseData.description || !courseData.category || !courseData.level) {
+        throw new Error("Veuillez remplir tous les champs obligatoires")
+      }
 
-    // Simulation de sauvegarde
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+      // Préparation des données du cours
+      const storedAdmin = localStorage.getItem('adminUser')
+      if (!storedAdmin) {
+        throw new Error("Vous devez être connecté pour créer un cours")
+      }
 
-    console.log("Cours créé:", { courseData, lessons })
+      const formData = new FormData()
+      formData.append("adminUser", storedAdmin)
+      formData.append("title", courseData.title)
+      formData.append("description", courseData.description)
+      formData.append("category", courseData.category)
+      formData.append("level", courseData.level)
+      formData.append("price", courseData.price)
+      formData.append("duration", courseData.duration)
+      formData.append("is_published", String(courseData.is_published))
+      
+      if (courseData.image) {
+        formData.append("image", courseData.image)
+      }
+      
+      // Ajout des leçons (avec les champs correspondant au schéma de la base de données)
+      const formattedLessons = lessons.map(lesson => ({
+        title: lesson.title,
+        content: lesson.content,
+        video_url: lesson.video_url,
+        order_index: lesson.order_index
+      }))
+      formData.append("lessons", JSON.stringify(formattedLessons))
 
-    // Redirection vers le dashboard
-    router.push("/admin/dashboard")
+      // Envoi des données à l'API
+      const response = await fetch("/api/courses/create", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Erreur lors de la création du cours")
+      }
+
+      // Redirection vers le dashboard après succès
+      router.push("/admin/dashboard")
+    } catch (error) {
+      console.error("Erreur:", error)
+      // Ici vous pouvez ajouter une notification d'erreur pour l'utilisateur
+      // Par exemple avec un composant Toast ou Alert
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (!adminUser) {
@@ -297,17 +343,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="longDescription">Description détaillée</Label>
-                  <Textarea
-                    id="longDescription"
-                    placeholder="Une description complète qui apparaîtra sur la page du cours"
-                    value={courseData.longDescription}
-                    onChange={(e) => handleCourseChange("longDescription", e.target.value)}
-                    rows={5}
-                  />
-                </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="level">Niveau *</Label>
@@ -326,75 +361,30 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="totalHours">Durée totale</Label>
+                    <Label htmlFor="duration">Durée totale</Label>
                     <Input
-                      id="totalHours"
-                      placeholder="Ex: 12h"
-                      value={courseData.totalHours}
-                      onChange={(e) => handleCourseChange("totalHours", e.target.value)}
+                      id="duration"
+                      placeholder="Ex: 12"
+                      value={courseData.duration}
+                      onChange={(e) => handleCourseChange("duration", e.target.value)}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="price">Prix (€)</Label>
+                    <Label htmlFor="price">Prix (CFA)</Label>
                     <Input
                       id="price"
                       type="number"
-                      placeholder="79"
+                      placeholder="Prix en CFA"
                       value={courseData.price}
                       onChange={(e) => handleCourseChange("price", e.target.value)}
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="originalPrice">Prix original (€)</Label>
-                    <Input
-                      id="originalPrice"
-                      type="number"
-                      placeholder="120"
-                      value={courseData.originalPrice}
-                      onChange={(e) => handleCourseChange("originalPrice", e.target.value)}
-                    />
-                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-[#141835]">Import rapide depuis PDF</CardTitle>
-                <CardDescription>
-                  Téléchargez un PDF pour extraire automatiquement le contenu et créer les leçons
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col sm:flex-row gap-4 items-start">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => pdfInputRef.current?.click()}
-                    disabled={isUploadingPdf}
-                    className="w-full sm:w-auto"
-                  >
-                    {isUploadingPdf ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                        Extraction en cours...
-                      </>
-                    ) : (
-                      <>
-                        <FileText className="w-4 h-4 mr-2" />
-                        Importer un PDF
-                      </>
-                    )}
-                  </Button>
-                  <input ref={pdfInputRef} type="file" accept=".pdf" onChange={handlePdfUpload} className="hidden" />
-                  <p className="text-sm text-muted-foreground">
-                    Le système extraira automatiquement le texte et créera les leçons basées sur les chapitres détectés.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+
 
             {/* Leçons */}
             <Card>
@@ -443,23 +433,21 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Durée estimée</Label>
-                          <Input
-                            placeholder="Ex: 15:30"
-                            value={lesson.duration}
-                            onChange={(e) => handleLessonChange(lesson.id, "duration", e.target.value)}
-                          />
+                          <Label>Ordre d'apparition</Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              min="1"
+                              placeholder="Position dans le cours"
+                              value={lesson.order_index}
+                              onChange={(e) => handleLessonChange(lesson.id, "order_index", Math.max(1, parseInt(e.target.value) || 1))}
+                              required
+                            />
+                            <div className="text-sm text-muted-foreground whitespace-nowrap">
+                              sur {lessons.length}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Description de la leçon</Label>
-                        <Textarea
-                          placeholder="Décrivez brièvement ce que les étudiants apprendront"
-                          value={lesson.description}
-                          onChange={(e) => handleLessonChange(lesson.id, "description", e.target.value)}
-                          rows={2}
-                        />
                       </div>
 
                       <div className="space-y-2">
@@ -477,15 +465,13 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                         </p>
                       </div>
 
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={`video-${lesson.id}`}
-                          checked={lesson.hasVideo}
-                          onChange={(e) => handleLessonChange(lesson.id, "hasVideo", e.target.checked)}
-                          className="rounded"
+                      <div className="space-y-2">
+                        <Label>URL de la vidéo (optionnel)</Label>
+                        <Input
+                          placeholder="URL de la vidéo (YouTube, Vimeo, etc.)"
+                          value={lesson.video_url || ""}
+                          onChange={(e) => handleLessonChange(lesson.id, "video_url", e.target.value)}
                         />
-                        <Label htmlFor={`video-${lesson.id}`}>Cette leçon contient une vidéo d'introduction</Label>
                       </div>
                     </CardContent>
                   </Card>

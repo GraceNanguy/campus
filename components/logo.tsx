@@ -21,7 +21,7 @@ export default function Logo({
   size = "md",
   showWordmark = true,
   imageSrc = "/images/logo-placeholder.png",
-  imageAlt = "Logo AY E-ACADEMIE",
+  imageAlt = "Logo AY E-CAMPUS",
   className,
 }: LogoProps) {
   const S = sizes[size]
@@ -48,7 +48,7 @@ export default function Logo({
       )}
       {showWordmark && (
         <span className={cn("font-bold tracking-tight", S.text)} style={{ color: "#141835" }}>
-          AY E-ACADEMIE
+          AY E-CAMPUS
         </span>
       )}
     </div>

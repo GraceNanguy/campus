@@ -5,7 +5,7 @@ import RootNav from "@/components/root-nav"
 import { AuthProvider } from "@/contexts/AuthContext"
 
 export const metadata: Metadata = {
-  title: "AY E-ACADEMIE - Youth Education",
+  title: "AY E-CAMPUS - Youth Education",
   description: "Des cours modernes pour apprendre les compétences de demain.",
     generator: 'v0.app'
 }

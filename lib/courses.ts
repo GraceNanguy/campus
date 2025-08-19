@@ -178,7 +178,7 @@ export async function getLessonsByCourseId(courseId: string) {
   try {
     const { data, error } = await supabase
       .from("lessons")
-      .select("id, title, content, video_url, pdf_url, order_index")
+      .select("id, title, content, video_url, order_index")
       .eq("course_id", courseId)
       .order("order_index", { ascending: true })
 
@@ -194,7 +194,7 @@ export async function getLessonById(lessonId: string) {
   try {
     const { data, error } = await supabase
       .from("lessons")
-      .select("id, title, content, video_url, pdf_url, order_index, course_id")
+      .select("id, title, content, video_url, order_index, course_id")
       .eq("id", lessonId)
       .maybeSingle()
 

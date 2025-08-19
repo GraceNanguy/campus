@@ -24,11 +24,11 @@ export default function AboutPage() {
           <h1 className="relative text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#141835] mb-6">
             À propos de{" "}
             <span className="bg-gradient-to-r from-[#141835] to-[#2a3a6a] bg-clip-text text-transparent">
-              AY E-ACADEMIE
+              AY E-CAMPUS
             </span>
           </h1>
           <p className="relative text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            AY E-ACADEMIE est né d'une idée simple: offrir aux jeunes des parcours d'apprentissage clairs, concrets et
+            AY E-CAMPUS est né d'une idée simple: offrir aux jeunes des parcours d'apprentissage clairs, concrets et
             accessibles, pour développer des compétences utiles aujourd'hui et demain.
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function AboutPage() {
             </div>
             <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">
               <p className="group-hover:text-foreground transition-colors duration-300">
-                L'idée d'AY E-ACADEMIE est venue sur le terrain, au contact de jeunes motivés mais souvent perdus face à
+                L'idée d'AY E-CAMPUS est venue sur le terrain, au contact de jeunes motivés mais souvent perdus face à
                 des ressources trop dispersées. Nous avons voulu un endroit unique, simple et efficace.
               </p>
               <p className="group-hover:text-foreground transition-colors duration-300">

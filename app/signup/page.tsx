@@ -53,7 +53,7 @@ export default function SignupPage() {
       <section className="mx-auto w-full max-w-xl px-4 py-10 sm:py-14">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-[#141835]">Créer un compte</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Rejoignez AY E-ACADEMIE et commencez votre parcours.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Rejoignez AY E-CAMPUS et commencez votre parcours.</p>
         </div>
 
         <div className="rounded-2xl border bg-white p-5 shadow-sm sm:p-7">

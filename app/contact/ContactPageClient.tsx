@@ -22,8 +22,8 @@ export default function ContactPageClient() {
             <div className="mt-6 space-y-4 text-sm">
               <p className="flex items-center gap-2">
                 <Mail className="h-5 w-5" style={{ color: "#141835" }} />
-                <a href="mailto:contact@ay-e-academie.com" className="hover:underline">
-                  contact@ay-e-academie.com
+                <a href="mailto:contact@ay-e-campus.com" className="hover:underline">
+                  contact@ay-e-campus.com
                 </a>
               </p>
               <p className="flex items-center gap-2">

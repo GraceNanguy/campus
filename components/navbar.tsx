@@ -86,7 +86,7 @@ export default function Navbar() {
               )}
 
               <span className="hidden sm:inline text-sm text-gray-600">
-                Bonjour, {user.user_metadata?.first_name || user.email}
+                Bonjour, {user.user_metadata?.full_name || user.email}
               </span>
               <Button
                 onClick={handleSignOut}
